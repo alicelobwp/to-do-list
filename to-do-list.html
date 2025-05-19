@@ -1,6 +1,154 @@
-<! doctype.html>
+<! DOCTYPE.html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lista de Tarefas</title>
+  
+  <style>
+    body 
+    {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 0 20px;
+      background: #f4f4f4;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+     ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: white;
+      margin-bottom: 10px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    li.completed span {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .actions button {
+      margin-left: 5px;
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 5px 8px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .actions button.complete-btn {
+      background: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lista de Tarefas</h1>
+
+  <form id="taskForm">
+    <input type="text" id="taskInput" placeholder="Digite uma nova tarefa..." required />
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <ul id="taskList"></ul>
+
+  <script>
+    const taskForm = document.getElementById('taskForm');
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+
+    // Carregar tarefas do localStorage
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = '';
+
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.className = task.completed ? 'completed' : '';
+        
+        const span = document.createElement('span');
+        span.textContent = task.text;
+        
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        // Botão para marcar como concluída
+        const completeBtn = document.createElement('button');
+        completeBtn.textContent = task.completed ? 'Desmarcar' : 'Concluir';
+        completeBtn.className = 'complete-btn';
+        completeBtn.onclick = () => {
+          tasks[index].completed = !tasks[index].completed;
+          saveTasks();
+          renderTasks();
+        };
+
+        // Botão para remover tarefa
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Remover';
+        deleteBtn.onclick = () => {
+          tasks.splice(index, 1);
+          saveTasks();
+          renderTasks();
+        };
+
+        actions.appendChild(completeBtn);
+        actions.appendChild(deleteBtn);
+
+        li.appendChild(span);
+        li.appendChild(actions);
+
+        taskList.appendChild(li);
+      });
+    }
+
+    taskForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        tasks.push({ text: taskText, completed: false });
+        saveTasks();
+        renderTasks();
+        taskInput.value = '';
+        taskInput.focus();
+      }
+    });
+
+    // começar lista de tarefas
+    renderTasks();
+  </script>
+</style>
+
+</body>
+</html>
