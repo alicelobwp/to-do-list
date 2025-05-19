@@ -1,2 +1,4 @@
-# to-do-list
-Projeto de uma lista de afazeres usando: JavaScript, HTML, CSS
+# Lista de afazeres 
+
+Esse projeto é uma lista de afazeres, onde os usuários podem por qualquer coisa 
+- marcar/desmarcar objetos 
